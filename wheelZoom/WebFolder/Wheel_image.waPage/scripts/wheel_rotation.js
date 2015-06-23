@@ -1,4 +1,3 @@
-
 /*!
 	Wheelzoom 3.0.0
 	license: MIT
@@ -10,7 +9,9 @@ wheelzoom3 = (function() {
                 zoom: 0.10,
                 type:"",
                 image:[],
-                monContextCanvas: []
+                monContextCanvas: [],
+               	monDraw : ''
+
 
         };
         var canvasTravail = document.createElement('canvas');
@@ -20,8 +21,7 @@ wheelzoom3 = (function() {
 
         
         main3 = function(img, options) {
-
-                if (img.nodeName !== 'CANVAS') {
+                if (!img || !img.nodeName || (img.nodeName !== 'IMG' && img.nodeName !== 'CANVAS')) {
                         return;
                 }
                 var settings = {};
@@ -31,48 +31,7 @@ wheelzoom3 = (function() {
                 var bgHeight;
                 var bgPosX;
                 var bgPosY;
-                var _Init=true;
                 var previousEvent;
-                
-           	window.requestAnimFrame = (function(){
-		    	return window.requestAnimationFrame       || // La forme standardisée
-		           window.webkitRequestAnimationFrame || // Pour Chrome et Safari
-		           window.mozRequestAnimationFrame    || // Pour Firefox
-		           window.oRequestAnimationFrame      || // Pour Opera
-		           window.msRequestAnimationFrame     || // Pour Internet Explorer
-		           function(callback){                   // Pour les mauvais
-		               window.setTimeout(callback, 1000 / 60);
-           };
-			})();
-		 //C'est ici que l'on placera tout le code servant à nos dessins.                
-           function drawCanvas(_Init,img,width,height,bgPosX,bgPosY,bgWidth,bgHeight){
-			        // l'ordre des paramètres de drawCanvas est calqué sur ceux de drawImage de canvas           	
-           			monContext.save();
-                    monContext.fillStyle='white';
-                    monContext.fillRect(0,0,canvas.width,canvas.height);           			
-           			monContext.translate(bgPosX,bgPosY);
-					monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
-				    monContext.beginPath();
-				    monContext.moveTo(30, 96);
-				    monContext.lineTo(70, 66);
-				    monContext.lineTo(103, 76);
-				    monContext.lineTo(170, 15);
-				    monContext.stroke();
-				    monContext.beginPath(); //On démarre un nouveau tracé
-			        monContext.moveTo(0, 300); //On se déplace au coin inférieur gauche
-			        monContext.lineTo(150, 0);
-			        monContext.lineTo(300, 300);
-			        monContext.lineTo(0, 300);
-			        monContext.stroke(); //On trace seulement les lignes.
-			        monContext.closePath();
-			        monContext.restore();
-			        //il n'y a pas lieu d'animer si on est en phase d'initialisation
-			        if (!_Init){
-        				window.requestAnimFrame(function() { drawCanvas(_Init,img,width,height,bgPosX,bgPosY,bgWidth,bgHeight) });
-        						}
-
-			        
-		    	}
                 
                 function setSrcToBackground3(img,bgRatio) {
                 img.style.backgroundImage = "url('" + img.src + "')";
@@ -85,27 +44,38 @@ wheelzoom3 = (function() {
 //                img.src = canvasTravail.toDataURL();
 //                var monRatio=monContext.canvas.clientWidth/img.naturalWidth;
 				monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
-				drawCanvas(_Init,img,width,height,bgPosX,bgPosY,bgWidth,bgHeight);
+				drawCanvas(0);
 //                img.src = canvas.toDataURL();
 				}
 
                 function updateBgStyle3() {
-                        if (bgPosX > 0) {
-                                bgPosX = 0;
-                        }
-                        else if (bgPosX < width - bgWidth) {
-                                bgPosX = width - bgWidth;
-                        }
-                        if (bgPosY > 0) {
-                                bgPosY = 0;
-                        }
-                        else if (bgPosY < height - bgHeight) {
-                                bgPosY = height - bgHeight;
-                        }
+//                        if (bgPosX > 0) {
+//                                bgPosX = 0;
+//                        }
+//                        else if (bgPosX < width - bgWidth) {
+//                                bgPosX = width - bgWidth;
+//                        }
+//                        if (bgPosY > 0) {
+//                                bgPosY = 0;
+//                        }
+//                        else if (bgPosY < height - bgHeight) {
+//                                bgPosY = height - bgHeight;
+//                        }
 //                        img.style.backgroundSize = bgWidth + 'px ' + bgHeight + 'px';
 //                        img.style.backgroundPosition = bgPosX + 'px ' + bgPosY + 'px';
 						var img = settings.image;
-						  drawCanvas(_Init,img,width,height,bgPosX,bgPosY,bgWidth,bgHeight);
+//						var monRatio=monContext.canvas.clientWidth/img.naturalWidth;
+//						  monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,monRatio*img.naturalWidth,monRatio*img.naturalHeight);
+//						  monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
+	                        monContext.fillStyle='white';
+	                        monContext.fillRect(-10,-10,canvas.width+10,canvas.height+10);
+							  
+						  monContext.translate(bgPosX/100,bgPosY/100);
+						  
+						  monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,0,0,bgWidth,bgHeight);
+
+
+						  drawCanvas();
 
 
                 }
@@ -120,8 +90,8 @@ wheelzoom3 = (function() {
                 function onwheel3(e) {
                         var deltaY = 0;
                         e.preventDefault();
-//                        monContext.fillStyle='white';
-//                        monContext.fillRect(0,0,canvas.width,canvas.height);
+                        monContext.fillStyle='white';
+                        monContext.fillRect(0,0,canvas.width,canvas.height);
                         if (e.deltaY) { // FireFox 17+ (IE9+, Chrome 31+?)
                                 deltaY = e.deltaY;
                         }
@@ -164,7 +134,7 @@ wheelzoom3 = (function() {
                 function drag3(e) {
                         e.preventDefault();
 //                        monContext.fillStyle='white';
-//                        monContext.fillRect(0,0,canvas.width,canvas.height);
+//                        monContext.fillRect(-10,-10,canvas.width+10,canvas.height+10);
                         bgPosX += (e.pageX - previousEvent.pageX);
                         bgPosY += (e.pageY - previousEvent.pageY);
                         previousEvent = e;
@@ -184,24 +154,18 @@ wheelzoom3 = (function() {
                 }
 
                 function loaded3() {
-                        width = settings.image.naturalWidth;//restera invariable
-                        height = settings.image.naturalHeight;//restera invariable
-                        bgWidth = canvas.width;//au départ, on place l'image à l'origine et au maximum du container disponible
+                        width = settings.image.naturalWidth;
+                        height = settings.image.naturalHeight;
+                        bgWidth = canvas.width;
                         bgHeight = canvas.height;
                         bgPosX = 0;
                         bgPosY = 0;
                         var bgRatioX = bgWidth/width;
                         var bgRatioY = bgHeight/height;
-                        var bgRatio= bgRatioY<bgRatioY ? bgRatioY : bgRatioX  ; 
-		                width=bgWidth = bgRatio*img.naturalWidth;
-						height=bgHeight = bgRatio*img.naturalHeight;                                               
+                        var bgRatio= bgRatioY<bgRatioY ? bgRatioY : bgRatioX  ;                      
+                        setSrcToBackground3(img,bgRatio);   
                         img.style.backgroundSize = width + 'px ' + height + 'px';
                         img.style.backgroundPosition = '0 0';
-		                img.style.backgroundImage = "url('" + img.src + "')";
-		                img.style.backgroundRepeat = 'no-repeat'; 
-						drawCanvas(_Init,img,width,height,bgPosX,bgPosY,bgWidth,bgHeight);
-						// à l'issue de loaded(3), l'_Init est false
-						_Init=false;	                                       
                         canvas.addEventListener('wheelzoom.reset', reset3);
                         canvas.addEventListener('wheel', onwheel3);
                         canvas.addEventListener('mousedown', draggable3);
@@ -232,6 +196,7 @@ wheelzoom3 = (function() {
                                 zoom = settings.zoom;
                                 monContext=settings.monContextCanvas;
                                 canvas=settings.monContextCanvas.canvas;
+                                drawCanvas=settings.monDraw;
                         }
               
                 if (img.complete) {
@@ -243,7 +208,8 @@ wheelzoom3 = (function() {
                                 img.removeEventListener('load', onload3);
                                 loaded3();
                         }
-                        img.addEventListener('load', onload3);
+                        //on postule que l'on ne doit jamais passer par ici
+//                        img.addEventListener('load', onload3);
                 }
         };
         // Do nothing in IE8
@@ -265,3 +231,4 @@ wheelzoom3 = (function() {
                 }
         }
 }());
+
