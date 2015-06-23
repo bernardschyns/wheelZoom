@@ -3,6 +3,15 @@
 	Changes to this CSS file might be lost when it is regenerated.
 */
 
+#image1 {
+	z-index: 4;
+	width: 498px;
+	height: 392px;
+	top: 12px;
+	left: 999px;
+	position: absolute;
+}
+
 #container1 {
 	z-index: 3;
 	width: 950px;

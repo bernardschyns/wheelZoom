@@ -3,13 +3,15 @@
 	license: MIT
 	http://www.jacklmoore.com/wheelzoom
 */
-wheelzoom = (function() {
+wheelzoom3 = (function() {
 //        debugger;
         var defaults = {
                 zoom: 0.10,
                 type:"",
                 image:[],
-                monContextCanvas: []
+                monContextCanvas: [],
+               	monDraw : ''
+
 
         };
         var canvasTravail = document.createElement('canvas');
@@ -18,7 +20,7 @@ wheelzoom = (function() {
 
 
         
-        main = function(img, options) {
+        main3 = function(img, options) {
         		//si img devait être un canvas,on doit le garder en mémoire
         		if(options.type=="CANVAS"){
         		var tempoCanvas=img
@@ -36,18 +38,22 @@ wheelzoom = (function() {
                 var bgPosY;
                 var previousEvent;
                 
-                function setSrcToBackground(img,bgRatio) {
+                function setSrcToBackground3(img,bgRatio) {
                 img.style.backgroundImage = "url('" + img.src + "')";
                 img.style.backgroundRepeat = 'no-repeat';
-                bgWidth = bgRatio*img.naturalWidth;
-				bgHeight = bgRatio*img.naturalHeight;
+                // il s'avère que les lignes suivantes de la programmation d'origine sont nuisibles
+//				canvas.width = img.naturalWidth;
+//				canvas.height = img.naturalHeight;                
+                width=bgWidth = bgRatio*img.naturalWidth;
+				height=bgHeight = bgRatio*img.naturalHeight;
 //                img.src = canvasTravail.toDataURL();
 //                var monRatio=monContext.canvas.clientWidth/img.naturalWidth;
 				monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
+				drawCanvas();
 //                img.src = canvas.toDataURL();
 				}
 
-                function updateBgStyle() {
+                function updateBgStyle3() {
                         if (bgPosX > 0) {
                                 bgPosX = 0;
                         }
@@ -66,18 +72,19 @@ wheelzoom = (function() {
 						var monRatio=monContext.canvas.clientWidth/img.naturalWidth;
 //						  monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,monRatio*img.naturalWidth,monRatio*img.naturalHeight);
 						  monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
+						  drawCanvas();
 
 
                 }
 
-                function reset() {
+                function reset3() {
                         bgWidth = width;
                         bgHeight = height;
                         bgPosX = bgPosY = 0;
-                        updateBgStyle();
+                        updateBgStyle3();
                 }
 
-                function onwheel(e) {
+                function onwheel3(e) {
                         var deltaY = 0;
                         e.preventDefault();
                         monContext.fillStyle='white';
@@ -114,36 +121,36 @@ wheelzoom = (function() {
                         bgPosY = offsetY - (bgHeight * bgRatioY);
                         // Prevent zooming out beyond the starting size
                         if (bgWidth <= width || bgHeight <= height) {
-                                reset();
+                                reset3();
                         }
                         else {
-                                updateBgStyle();
+                                updateBgStyle3();
                         }
                 }
 
-                function drag(e) {
+                function drag3(e) {
                         e.preventDefault();
                         monContext.fillStyle='white';
                         monContext.fillRect(0,0,canvas.width,canvas.height);
                         bgPosX += (e.pageX - previousEvent.pageX);
                         bgPosY += (e.pageY - previousEvent.pageY);
                         previousEvent = e;
-                        updateBgStyle();
+                        updateBgStyle3();
                 }
 
-                function removeDrag() {
-                        document.removeEventListener('mouseup', removeDrag);
-                        document.removeEventListener('mousemove', drag);
+                function removeDrag3() {
+                        document.removeEventListener('mouseup', removeDrag3);
+                        document.removeEventListener('mousemove', drag3);
                 }
                 // Make the background draggable
-                function draggable(e) {
+                function draggable3(e) {
                         e.preventDefault();
                         previousEvent = e;
-                        document.addEventListener('mousemove', drag);
-                        document.addEventListener('mouseup', removeDrag);
+                        document.addEventListener('mousemove', drag3);
+                        document.addEventListener('mouseup', removeDrag3);
                 }
 
-                function loaded() {
+                function loaded3() {
                         width = settings.image.naturalWidth;
                         height = settings.image.naturalHeight;
                         bgWidth = canvas.width;
@@ -153,26 +160,26 @@ wheelzoom = (function() {
                         var bgRatioX = bgWidth/width;
                         var bgRatioY = bgHeight/height;
                         var bgRatio= bgRatioY<bgRatioY ? bgRatioY : bgRatioX  ;                      
-                        setSrcToBackground(img,bgRatio);   
+                        setSrcToBackground3(img,bgRatio);   
                         img.style.backgroundSize = width + 'px ' + height + 'px';
                         img.style.backgroundPosition = '0 0';
 //                        si img était un canvas au départ, c'est à lui que s'applique les events
 //                         if(settings.type=="CANVAS"){
 //                        	img=tempoCanvas
 //                        	}
-                        canvas.addEventListener('wheelzoom.reset', reset);
-                        canvas.addEventListener('wheel', onwheel);
-                        canvas.addEventListener('mousedown', draggable);
+                        canvas.addEventListener('wheelzoom.reset', reset3);
+                        canvas.addEventListener('wheel', onwheel3);
+                        canvas.addEventListener('mousedown', draggable3);
                 }
                 img.addEventListener('wheelzoom.destroy', function(originalProperties) {
                         console.log(originalProperties);
                         img.removeEventListener('wheelzoom.destroy');
-                        img.removeEventListener('wheelzoom.reset', reset);
-                        img.removeEventListener('load', onload);
-                        img.removeEventListener('mouseup', removeDrag);
-                        img.removeEventListener('mousemove', drag);
-                        img.removeEventListener('mousedown', draggable);
-                        img.removeEventListener('wheel', onwheel);
+                        img.removeEventListener('wheelzoom.reset', reset3);
+                        img.removeEventListener('load', onload3);
+                        img.removeEventListener('mouseup', removeDrag3);
+                        img.removeEventListener('mousemove', drag3);
+                        img.removeEventListener('mousedown', draggable3);
+                        img.removeEventListener('wheel', onwheel3);
                         img.style.backgroundImage = originalProperties.backgroundImage;
                         img.style.backgroundRepeat = originalProperties.backgroundRepeat;
                         img.src = originalProperties.src;
@@ -190,18 +197,19 @@ wheelzoom = (function() {
                                 zoom = settings.zoom;
                                 monContext=settings.monContextCanvas;
                                 canvas=settings.monContextCanvas.canvas;
+                                drawCanvas=settings.monDraw;
                         }
               
                 if (img.complete) {
                         
-                        loaded();
+                        loaded3();
                 }
                 else {
-                        function onload() {
-                                img.removeEventListener('load', onload);
-                                loaded();
+                        function onload3() {
+                                img.removeEventListener('load', onload3);
+                                loaded3();
                         }
-                        img.addEventListener('load', onload);
+                        img.addEventListener('load', onload3);
                 }
         };
         // Do nothing in IE8
@@ -213,11 +221,11 @@ wheelzoom = (function() {
         else {
                 return function(elements, options) {
                         if (elements && elements.length) {
-                                Array.prototype.forEach.call(elements, main, options);
+                                Array.prototype.forEach.call(elements, main3, options);
                         }
                         else if (elements && elements.nodeName) {
 //                        	debugger;
-                                main(elements, options);
+                                main3(elements, options);
                         }
                         return elements;
                 }

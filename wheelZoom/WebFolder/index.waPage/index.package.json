@@ -12,6 +12,10 @@
 			"type": "widget"
 		},
 		{
+			"id": "Widget/image",
+			"type": "widget"
+		},
+		{
 			"id": "default",
 			"type": "theme"
 		},
@@ -37,6 +41,11 @@
 		},
 		{
 			"id": "index.waPage/scripts/wheelzoom3.js",
+			"path": "WEBFOLDER",
+			"type": "script"
+		},
+		{
+			"id": "index.waPage/scripts/wheelzoom2.js",
 			"path": "WEBFOLDER",
 			"type": "script"
 		}
