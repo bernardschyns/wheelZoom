@@ -51,7 +51,11 @@ wheelzoom3 = (function() {
                     monContext.fillStyle='white';
                     monContext.fillRect(0,0,canvas.width,canvas.height);           			
            			monContext.translate(bgPosX,bgPosY);
-					monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
+           			monContext.scale(bgWidth/canvas.width,bgWidth/canvas.width);
+//					monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,bgPosX,bgPosY,bgWidth,bgHeight);
+					monContext.drawImage(img, 0, 0,img.naturalWidth,img.naturalHeight,0,0,width,height);
+					
+					//il y a lieu de tenir compte du facteur de zoom , on en a implicitement tenu compte dans draw image
 				    monContext.beginPath();
 				    monContext.moveTo(30, 96);
 				    monContext.lineTo(70, 66);
